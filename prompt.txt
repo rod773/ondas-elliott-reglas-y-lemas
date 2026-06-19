@@ -1,0 +1,201 @@
+================================================================================
+  PROJECT PROMPT — ONDAS DE ELLIOTT VIDEO COURSE GENERATOR
+================================================================================
+
+PROJECT NAME:
+  Elliott Wave Theory — Rules & Guidelines | Automated Video Course Generator
+
+PROJECT GOAL:
+  Automatically generate a complete YouTube-ready video course (1920x1080)
+  from a PDF document about Elliott Wave Theory (Ondas de Elliott).
+  Each page of the PDF becomes a video scene with a matching TTS audio narration.
+
+--------------------------------------------------------------------------------
+CONTEXT
+--------------------------------------------------------------------------------
+
+SOURCE DOCUMENT:
+  File    : ONDAS-DE-ELLIOTT-REGLAS-Y-LEMAS.pdf
+  Language: Spanish
+  Pages   : 53
+  Content : Complete set of rules and guidelines for Elliott Wave Theory,
+            covering: Impulses, Diagonals, ZigZag, Flat, Triangles,
+            and Combinations.
+
+AUTHOR / COURSE CREATOR:
+  Gian Victor Cuevas
+
+--------------------------------------------------------------------------------
+WHAT THE SCRIPT DOES
+--------------------------------------------------------------------------------
+
+STEP 1 — PDF TO IMAGES
+  - Opens the PDF using PyMuPDF (fitz)
+  - Renders each page at 180 DPI as a high-quality PNG image
+  - Saves all page images to: video_output/pages/
+
+STEP 2 — FRAME COMPOSITION (1920x1080)
+  - For each page image, creates a 1920x1080 canvas with:
+    · Dark blue background (RGB 15, 20, 40)
+    · PDF page image centered and proportionally scaled
+    · Bottom bar showing: title + page number
+    · Blue separator line above the bottom bar
+  - Saves composed frames to: video_output/frames/
+
+STEP 3 — TTS AUDIO GENERATION
+  - Uses gTTS (Google Text-to-Speech) in Spanish
+  - Each page has a corresponding narration text defined in PAGE_TEXTS dict
+  - Audio files saved as MP3 to: video_output/audio/
+  - Already-generated audio files are skipped (resumable process)
+
+STEP 4 — INTRO / TITLE CARD
+  - Generates a custom 1920x1080 title card with:
+    · Course title: "ONDAS DE ELLIOTT"
+    · Subtitle: "REGLAS Y LEMAS — VOL. 1 — CURSO COMPLETO"
+    · Decorative lines and section list
+  - Has its own TTS intro narration
+
+STEP 5 — CLIP ASSEMBLY
+  - Each frame + audio pair becomes an ImageClip via MoviePy
+  - Clip duration = audio duration + 0.8 seconds pause
+  - All clips concatenated in order: Intro + Page 1 ... Page 53
+
+STEP 6 — VIDEO EXPORT
+  - Codec   : libx264
+  - Audio   : AAC 192k
+  - FPS     : 24
+  - Bitrate : 4000k
+  - Preset  : medium (balance between speed and quality)
+  - Output  : ondas_de_elliott_curso.mp4
+
+--------------------------------------------------------------------------------
+FILE STRUCTURE
+--------------------------------------------------------------------------------
+
+d:\Descargas\Gian-Victor-Cuevas\
+│
+├── ONDAS-DE-ELLIOTT-REGLAS-Y-LEMAS.pdf    ← Source PDF
+├── crear_video_elliott.py                  ← Main generator script
+├── instalar_dependencias.bat               ← Dependency installer (Windows)
+├── prompt.txt                              ← This file
+│
+└── video_output\
+    ├── pages\          ← PNG images extracted from PDF (page_000.png ...)
+    ├── frames\         ← Composed 1920x1080 frames (frame_000.png ...)
+    ├── audio\          ← TTS audio files (audio_000.mp3 ...)
+    └── ondas_de_elliott_curso.mp4  ← FINAL VIDEO OUTPUT
+
+--------------------------------------------------------------------------------
+PYTHON DEPENDENCIES
+--------------------------------------------------------------------------------
+
+  pymupdf          → PDF rendering (fitz)
+  Pillow           → Image composition
+  moviepy          → Video assembly and export
+  gtts             → Google Text-to-Speech (Spanish)
+  imageio          → Video I/O backend
+  imageio-ffmpeg   → FFmpeg binaries for moviepy
+
+  Install all with:
+    pip install pymupdf Pillow moviepy gtts imageio imageio-ffmpeg
+
+  Or run:
+    instalar_dependencias.bat
+
+--------------------------------------------------------------------------------
+CONFIGURATION VARIABLES (in crear_video_elliott.py)
+--------------------------------------------------------------------------------
+
+  PDF_PATH     → Path to source PDF
+  OUTPUT_DIR   → Working directory for intermediate files
+  OUTPUT_FILE  → Path for final MP4 output
+  VIDEO_W/H    → 1920 x 1080 (YouTube HD)
+  BG_COLOR     → Background color RGB (15, 20, 40) — dark navy blue
+  LANG         → "es" (Spanish TTS)
+  TTS_SPEED    → False = normal speed / True = slow speed
+  DPI          → 180 (PDF rendering resolution)
+  PADDING      → 40px margin around the PDF page image
+  FONT_SIZE_SUB→ 28px bottom bar subtitle font
+
+--------------------------------------------------------------------------------
+HOW TO RUN
+--------------------------------------------------------------------------------
+
+  1. Install dependencies:
+       instalar_dependencias.bat
+       (or: pip install pymupdf Pillow moviepy gtts imageio imageio-ffmpeg)
+
+  2. Run the generator:
+       python crear_video_elliott.py
+
+  3. Wait for completion.
+     The script will print progress for each step.
+     Audio files are cached — re-runs skip already-generated audio.
+
+  4. Find the finished video at:
+       d:\Descargas\Gian-Victor-Cuevas\ondas_de_elliott_curso.mp4
+
+--------------------------------------------------------------------------------
+VIDEO CONTENT OUTLINE (53 pages → 53 scenes + 1 intro)
+--------------------------------------------------------------------------------
+
+  INTRO        → Title card with course overview narration
+  Page  1      → Cover page
+  Page  2      → Table of contents
+  Page  3      → Introduction to wave trading
+  Pages  4-16  → Impulse waves — Rules (I.R.1 to I.R.8)
+  Pages  9-16  → Impulse waves — Guidelines (I.L.1 to I.L.14)
+  Pages 17-22  → Diagonal waves — Rules (D.R.1 to D.R.7)
+  Pages 23-25  → Diagonal waves — Guidelines (D.L.1 to D.L.5)
+  Pages 26-32  → ZigZag — Rules & Guidelines (Z.R.1-4, Z.L.1-8)
+  Pages 33-36  → Flat — Rules & Guidelines (P.R.1-4, P.L.1-3)
+  Pages 37      → Flat — Notes (extended flat, running flat)
+  Pages 38-42  → Contracting Triangle — Rules & Guidelines
+  Page  43     → Running Triangle — Rules
+  Pages 44-46  → Expanding Triangle — Rules & Guidelines
+  Pages 47-51  → Combinations — Rules (C.R.1-6)
+  Page  52     → Combinations — Guidelines (C.L.1)
+  Page  53     → Epilogue
+
+--------------------------------------------------------------------------------
+EXPECTED OUTPUT
+--------------------------------------------------------------------------------
+
+  Format      : MP4 (H.264 + AAC)
+  Resolution  : 1920 x 1080 px
+  Frame rate  : 24 fps
+  Video bitrate: ~4 Mbps
+  Audio bitrate: 192 kbps
+  Language    : Spanish
+  Est. duration: ~60–90 minutes (depending on TTS audio length per page)
+  Est. file size: ~1.5–3 GB
+
+--------------------------------------------------------------------------------
+NOTES & TIPS
+--------------------------------------------------------------------------------
+
+  - The script is resumable: if interrupted, re-run and it will skip
+    already-generated audio files.
+
+  - To regenerate audio for a specific page, delete its corresponding
+    audio_XXX.mp3 file from video_output/audio/ and re-run.
+
+  - To change the narration text for any page, edit the PAGE_TEXTS
+    dictionary in crear_video_elliott.py.
+
+  - For faster export, change preset from "medium" to "ultrafast"
+    (larger file, faster encoding).
+
+  - For smaller file size suitable for upload, change bitrate to "2000k"
+    and audio_bitrate to "128k".
+
+  - Requires an internet connection for gTTS (Google TTS API).
+    For offline TTS, replace gTTS with pyttsx3 or edge-tts.
+
+  - On Windows, if fonts (arial.ttf) are not found, the script falls back
+    to PIL default font. To use custom fonts, place .ttf files in the
+    same directory as the script and update the font path in build_frame().
+
+================================================================================
+END OF PROMPT
+================================================================================
